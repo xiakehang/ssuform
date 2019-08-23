@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ssuform demo</title>
+    <script src="parser.js"></script>
+    <script src="./form.js"></script>
+    <script src="./schema.js"></script>
     <script src="./index.js"></script>
+    <link rel="stylesheet" type="text/css" href="./index.css">
+    <script>
+        document.onreadystatechange = function () {
+            document.getElementById('uischema').appendChild(document.createTextNode(JSON.stringify(schema, null, 4)));
+        }
+    </script>
 </head>
+
 <body>
-    hello
+    <span>schema</span>
+    <textarea id="uischema" class="schema"></textarea>
 </body>
+
 </html>

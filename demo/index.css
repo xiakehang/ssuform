@@ -1,0 +1,12 @@
+body {
+    margin: 0px;
+}
+
+.schema {
+    width: 100%;
+    height: 400px;
+    font-weight: bold;
+    color: green;
+    background: #111;
+    padding: 0px;
+}

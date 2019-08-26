@@ -12,15 +12,22 @@
     <script src="./index.js"></script>
     <link rel="stylesheet" type="text/css" href="./index.css">
     <script>
-        document.onreadystatechange = function () {
-            document.getElementById('uischema').appendChild(document.createTextNode(JSON.stringify(schema, null, 4)));
-        }
+        // document.onreadystatechange = function() {
+
+        // }
     </script>
 </head>
 
 <body>
-    <span>schema</span>
-    <textarea id="uischema" class="schema"></textarea>
+    <div class="root">
+        <div class="north">
+            <textarea id="uischema" class="schema"></textarea>
+        </div>
+        <div class="south">
+
+        </div>
+    </div>
+
 </body>
 
 </html>

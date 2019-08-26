@@ -3,8 +3,7 @@
 
 const schema = {
     "xtype": "dataform",
-    "fields": [
-        {
+    "fields": [{
             "name": "id",
             "type": "string",
             "minLength": 1,
@@ -59,4 +58,3 @@ const schema = {
 
     ]
 }
-

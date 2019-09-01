@@ -14,5 +14,5 @@ function renderForm(changed = {}) {
 
     document.getElementsByClassName('south')[0].append(form.render({ values: parser.getValues(changed), schema, onChange: renderForm }));
 
-    document.getElementsByClassName('south')[0].firstChild.remove();
+    document.getElementsByClassName('south')[0].querySelector('div.auto-form').remove();
 }

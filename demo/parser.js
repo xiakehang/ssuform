@@ -12,7 +12,9 @@ const Parser = function(cfg) {
 
     let $ = {
         mode: state.mode,
-        val: () => {},
+        val: (key) => {
+            return state.values[key];
+        },
         sel: () => {}
     };
 
@@ -29,14 +31,16 @@ const Parser = function(cfg) {
         //     }, {});
         // }
 
-        state.values = fields.reduce((acc, f, index) => {
+        return fields.reduce((acc, f, index) => {
 
             if (isExpression(f.value)) {
                 acc[f.name] = parseExpression(f.value, { $ });
+                return acc;
             }
 
             if (isExpression(f.defaultValue) && !state.touched[f.name]) {
                 acc[f.name] = parseExpression(f.defaultValue, { $ });
+                return acc;
             }
 
             acc[f.name] = values[f.name] || null;
@@ -51,7 +55,7 @@ const Parser = function(cfg) {
 
     // initial values
     state.fields = filterFieldsByCondition(schema.fields, originalValues, $);
-    state.value = calc(state.fields);
+    state.values = calc(state.fields);
 
 
     // get values by initial values
@@ -80,19 +84,30 @@ const Parser = function(cfg) {
 
 
         },
-        change: (changed = {}) => {
+        change: (changed = {}, touch) => {
 
             // mark field as touched/dirty
-            Object.keys(changed).forEach(fieldname => {
-                state.touched[fieldname] = true;
+            if (touch !== false) {
 
-                if (originalValues[fieldname] !== changed[fieldname]) {
-                    state.dirty[fieldname] = changed[fieldname];
-                }
-            })
+                Object.keys(changed).forEach(fieldname => {
+                    state.touched[fieldname] = true;
 
-            state.fields = filterFieldsByCondition(schema.fields, Object.assign({}, state.value, changed), $);
-            state.values = calc(state.fields, Object.assign({}, state.values, changed));
+                    if (originalValues[fieldname] !== changed[fieldname]) {
+                        state.dirty[fieldname] = changed[fieldname];
+                    }
+                });
+            }
+
+            // update state.values
+            state.values = Object.assign({}, state.values, changed);
+
+            const fields = filterFieldsByCondition(schema.fields, state.values, $);
+            state.values = calc(fields, state.values);
+
+            if (JSON.stringify(fields.map(f => f.name)) !== JSON.stringify(state.fields.map(f => f.name))) {
+                state.fields = fields;
+                parser.change(state.values, false);
+            }
 
         }
 
@@ -125,7 +140,11 @@ const filterFieldsByCondition = (fields = [], values, $) => {
                 results.push(pass(itm, values));
             });
 
-            return eval(results.join('&'));
+            const rslt = eval(results.join('&'));
+
+            if (rslt) {
+                fields_.push(f);
+            }
 
         }
     });
@@ -140,11 +159,15 @@ const parseExpression = (exp, params) => {
     const names = Object.keys(params);
     const vals = Object.values(params);
 
+    let rslt = undefined;
+
     try {
         rslt = new Function(...names, `return ${exp}`)(...vals);
     } catch (error) {
         console.warn('parsing expression error \n' + error);
     }
+
+    return rslt;
 
 
 }
